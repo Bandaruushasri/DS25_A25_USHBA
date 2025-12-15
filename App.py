@@ -1,30 +1,32 @@
-from flask import Flask, request, jsonify
+import streamlit as st
 import numpy as np
 import tensorflow as tf
 import joblib
 
-app = Flask(__name__)
+st.set_page_config(page_title="Energy Prediction", layout="centered")
+st.title("Energy Efficiency Prediction")
 
 # Load model and scaler
 model = tf.keras.models.load_model("nn_energy_model")
 scaler = joblib.load("scaler.pkl")
 
-@app.route("/")
-def home():
-    return "Neural Network Regression Model API is Running"
+st.subheader("Enter Building Features")
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = request.get_json()
-    
-    features = np.array(data["features"]).reshape(1, -1)
-    features_scaled = scaler.transform(features)
-    
-    prediction = model.predict(features_scaled)
-    
-    return jsonify({
-        "Predicted_Heating_Load": float(prediction[0][0])
-    })
+features = [
+    st.number_input("Relative Compactness", value=0.9),
+    st.number_input("Surface Area", value=550.0),
+    st.number_input("Wall Area", value=300.0),
+    st.number_input("Roof Area", value=120.0),
+    st.number_input("Overall Height", value=7.0),
+    st.number_input("Orientation", min_value=2, max_value=5, value=2),
+    st.number_input("Glazing Area", value=0.15),
+    st.number_input("Glazing Area Distribution", min_value=0, max_value=5, value=1)
+]
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if st.button("Predict Heating Load"):
+    data = np.array(features).reshape(1, -1)
+    data_scaled = scaler.transform(data)
+    prediction = model.predict(data_scaled)
+    
+    st.success(f"Predicted Heating Load: {prediction[0][0]:.2f}")
+
