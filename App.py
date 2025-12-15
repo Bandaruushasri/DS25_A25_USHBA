@@ -7,7 +7,7 @@ st.set_page_config(page_title="Energy Prediction", layout="centered")
 st.title("Energy Efficiency Prediction")
 
 # Load model and scaler
-model = tf.keras.models.load_model("nn_energy_model")
+model = tf.keras.models.load_model("nn_energy_model.keras")
 scaler = joblib.load("scaler.pkl")
 
 st.subheader("Enter Building Features")
@@ -29,4 +29,5 @@ if st.button("Predict Heating Load"):
     prediction = model.predict(data_scaled)
     
     st.success(f"Predicted Heating Load: {prediction[0][0]:.2f}")
+
 
