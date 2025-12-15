@@ -23,11 +23,10 @@ features = [
     st.number_input("Glazing Area Distribution", min_value=0, max_value=5, value=1)
 ]
 
-if st.button("Predict Heating Load"):
+if st.button("Predict Energy Loads"):
     data = np.array(features).reshape(1, -1)
     data_scaled = scaler.transform(data)
     prediction = model.predict(data_scaled)
-    
-    st.success(f"Predicted Heating Load: {prediction[0][0]:.2f}")
 
-
+    st.success(f"Heating Load: {prediction[0][0]:.2f}")
+    st.success(f"Cooling Load: {prediction[0][1]:.2f}")
